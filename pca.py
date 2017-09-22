@@ -2,19 +2,23 @@ import numpy as np
 from numpy import linalg as LA    
 
 def calculate(files, scale):
-    data = np.loadtxt(files, delimiter=',')
+    data = np.genfromtxt(files, delimiter=',')
+    data = data[1:,:]
     call(data,scale)
     
 
 def call(data,scale):
-    data -= data.mean(axis=0)
+    data = data - data.mean(axis=0)
     covmatrix = np.cov(data, rowvar=False)
     eigvalue, eigvector = LA.eig(covmatrix)
-    print("Eigen Values are")
+    index = eigvalue.argsort()[::-1]   
+    eigvalue = eigvalue[index]
+    eigvector = eigvector[:,index]
+    print("--------Eigen Values are--------")
     print(eigvalue)
-    print("Eigen Vectors are")
+    print("--------Eigen Vectors are--------")
     print(eigvector)
     selpc = eigvector[:,:scale]
     newx = np.matmul(data,selpc)
+    print("--------Transformed Matrix is--------")
     print(newx)
-    return newx
